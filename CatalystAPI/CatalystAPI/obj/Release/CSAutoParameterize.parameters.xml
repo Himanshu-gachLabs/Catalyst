@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="CatalystDBConnectionString-Web.config Connection String" description="CatalystDBConnectionString Connection String used in web.config by the application to access the database." defaultValue="Data Source=ygizunhiou.database.windows.net;Initial Catalog=CatalystDB;Integrated Security=False;User Id=OpsSurvey;Password=t3chn0v3rt!;MultipleActiveResultSets=True" tags="SqlConnectionString">
+    <parameterEntry kind="XmlFile" scope="C:\\Users\\Himanshu\.K\\source\\repos\\CatalystAPI\\CatalystAPI\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='CatalystDBConnectionString']/@connectionString" />
+  </parameter>
+</parameters>
