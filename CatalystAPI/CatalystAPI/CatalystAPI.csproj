@@ -97,9 +97,12 @@
   <ItemGroup>
     <Compile Include="Configuration\CatalystAPIConfig.cs" />
     <Compile Include="Controller\DemoController.cs" />
+    <Compile Include="Controller\GetAllQuestionsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Model\CatalystDataContract.cs" />
+    <Compile Include="Model\Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
