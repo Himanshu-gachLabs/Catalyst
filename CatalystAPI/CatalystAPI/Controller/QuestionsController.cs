@@ -133,13 +133,152 @@ namespace CatalystAPI.Controller
         }
 
         // POST: api/Questions
-        public void Post([FromBody]string value)
+        public string Post([FromBody]Question objQuestion)
         {
+             string result;
+            //Question objQuestion = new Question();
+            //objQuestion = (JsonConvert.DeserializeObject(value)) as Question;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_SetQuestion, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@Title", SqlDbType.NVarChar, 250).Value = objQuestion.Title;
+                    da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = objQuestion.Description;
+                    da.SelectCommand.Parameters.Add("@Likes", SqlDbType.Int).Value = objQuestion.Likes;
+                    da.SelectCommand.Parameters.Add("@Tags", SqlDbType.NVarChar, 250).Value = objQuestion.Tags;
+                    da.SelectCommand.Parameters.Add("@Author", SqlDbType.NVarChar, 250).Value = objQuestion.Author;
+                    da.SelectCommand.Parameters.Add("@Mentions", SqlDbType.NVarChar, 250).Value = objQuestion.Mentions;
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Added Succesfully";
+
+                    }
+                    else
+                    {
+                        result = "Question Addition Failed";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Error objError = new Error();
+                objError.Method = "SP_SetError";
+                objError.Params = objQuestion.Title + "," + objQuestion.Description + "," + objQuestion.Likes + "," + objQuestion.Tags + "," + objQuestion.Author + "," + objQuestion.Mentions;
+                objError.StackTrace = ex.StackTrace;
+                objError.Message = ex.Message;
+                objError.Source = ex.Source;
+
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_SetError, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@Method", SqlDbType.NVarChar, 50).Value = objError.Method;
+                    da.SelectCommand.Parameters.Add("@Params", SqlDbType.NVarChar, 1000).Value = objError.Params;
+                    da.SelectCommand.Parameters.Add("@StackTrace", SqlDbType.NVarChar, 500).Value = objError.StackTrace;
+                    da.SelectCommand.Parameters.Add("@Message", SqlDbType.NVarChar, 250).Value = objError.Message;
+                    da.SelectCommand.Parameters.Add("@Source", SqlDbType.NVarChar, 250).Value = objError.Source;
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Addition Error Logged Succesfully";
+                    }
+                    else
+                    {
+                        result = "Question Addition Error Log Failed";
+                    }
+                }
+            }
+            return result;
         }
 
         // PUT: api/Questions/5
-        public void Put(int id, [FromBody]string value)
+        public string Put(int id, [FromBody]Question objQuestion)
         {
+            string result;
+            //Question objQuestion = new Question();
+            //objQuestion = (JsonConvert.DeserializeObject(value)) as Question;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_UpdateQuestion, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    if(objQuestion.Title != null)
+                        da.SelectCommand.Parameters.Add("@Title", SqlDbType.NVarChar, 250).Value = objQuestion.Title;
+                    if(objQuestion.Description!= null)
+                        da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = objQuestion.Description;
+                    if(objQuestion.Likes >= 0)
+                        da.SelectCommand.Parameters.Add("@Likes", SqlDbType.Int).Value = objQuestion.Likes;
+                    if (objQuestion.Tags != null)
+                        da.SelectCommand.Parameters.Add("@Tags", SqlDbType.NVarChar, 250).Value = objQuestion.Tags;
+                    if (objQuestion.Author != null)
+                        da.SelectCommand.Parameters.Add("@Author", SqlDbType.NVarChar, 250).Value = objQuestion.Author;
+                    if (objQuestion.Mentions != null)
+                        da.SelectCommand.Parameters.Add("@Mentions", SqlDbType.NVarChar, 250).Value = objQuestion.Mentions;
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Updated Succesfully";
+                    }
+                    else
+                    {
+                        result = "Question Updation Failed";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Error objError = new Error();
+                objError.Method = "SP_SetError";
+                objError.Params = objQuestion.Title + "," + objQuestion.Description + "," + objQuestion.Likes + "," + objQuestion.Tags + "," + objQuestion.Author + "," + objQuestion.Mentions;
+                objError.StackTrace = ex.StackTrace;
+                objError.Message = ex.Message;
+                objError.Source = ex.Source;
+
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_SetError, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@Method", SqlDbType.NVarChar, 50).Value = objError.Method;
+                    da.SelectCommand.Parameters.Add("@Params", SqlDbType.NVarChar, 1000).Value = objError.Params;
+                    da.SelectCommand.Parameters.Add("@StackTrace", SqlDbType.NVarChar, 500).Value = objError.StackTrace;
+                    da.SelectCommand.Parameters.Add("@Message", SqlDbType.NVarChar, 250).Value = objError.Message;
+                    da.SelectCommand.Parameters.Add("@Source", SqlDbType.NVarChar, 250).Value = objError.Source;
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Quesiton Updation Error Logged Succesfully";
+                    }
+                    else
+                    {
+                        result = "Question Updation Error Log Failed";
+                    }
+                }
+            }
+            return result;
         }
 
         // DELETE: api/Questions/5

@@ -13,6 +13,13 @@ namespace CatalystAPI.Model
         public static string CatalystDBConnectionString = "CatalystDBConnectionString";
         public static string tbl_AllQuestions = "AllQuestions";
         public static string tbl_AllAnswers = "AllAnswers";
+        public static string SP_SetQuestion = "[dbo].[stp_SetQuestion]";
+        public static string SP_SetError = "[dbo].[stp_SetEror]";
+        public static string SP_UpdateQuestion = "[dbo].[stp_UpdateQuestion]";
+        public static string SP_SetAnswer = "[dbo].[stp_SetAnswer]";
+        public static string SP_SetComment = "[dbo].[stp_SetComment]";
+        public static string SP_SetTag = "[dbo].[stp_SetTag]";
+
         public static class QuestionColumns
         {
             public static string ID = "ID";

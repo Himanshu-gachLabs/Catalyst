@@ -30,4 +30,30 @@ namespace CatalystAPI.Model
         public string Mentions { get; set; }
         public DateTime Created { get; set; }
     }
+    public class Comments
+    {
+        public int ID { get; set; }
+        public int QuestionID { get; set; }
+        public string Comment { get; set; }
+        public string Author { get; set; }
+        public string Mentions { get; set; }
+        public DateTime Created { get; set; }
+    }
+    public class Tags
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int UserCount { get; set; }
+        public DateTime Created { get; set; }
+    }
+    public class Error
+    {
+        public int ID { get; set; }
+        public string Method { get; set; }
+        public string Params { get; set; }
+        public string StackTrace { get; set; }
+        public string Message { get; set; }
+        public string Source { get; set; }
+    }
 }

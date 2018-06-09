@@ -96,9 +96,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\CatalystAPIConfig.cs" />
+    <Compile Include="Controller\AnswersController.cs" />
+    <Compile Include="Controller\CommentsController.cs" />
     <Compile Include="Controller\DemoController.cs" />
     <Compile Include="Controller\GetAllQuestionsController.cs" />
     <Compile Include="Controller\QuestionsController.cs" />
+    <Compile Include="Controller\TagController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
