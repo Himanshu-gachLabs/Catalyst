@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 
 namespace CatalystAPI.Controller
@@ -43,7 +41,7 @@ namespace CatalystAPI.Controller
                                                 Likes = int.Parse(row[Constants.QuestionColumns.Likes].ToString()),
                                                 Mentions = row[Constants.QuestionColumns.Mentions].ToString(),
                                                 Tags = row[Constants.QuestionColumns.Tags].ToString(),
-                                                AnswersCount = 5
+                                                AnswersCount = int.Parse(row[Constants.QuestionColumns.AnswersCount].ToString())
 
                                             }).ToList();
                         }
@@ -79,7 +77,6 @@ namespace CatalystAPI.Controller
                         DataTable dt = ds.Tables[Constants.tbl_AllQuestions];
                         if (dt.Rows.Count > 0)
                         {
-
                             objQuestion = (from DataRow row in dt.Rows
                                            select new Question
                                            {
@@ -91,8 +88,8 @@ namespace CatalystAPI.Controller
                                                Likes = int.Parse(row[Constants.QuestionColumns.Likes].ToString()),
                                                Mentions = row[Constants.QuestionColumns.Mentions].ToString(),
                                                Tags = row[Constants.QuestionColumns.Tags].ToString()
-                                           }).FirstOrDefault();                            
-                                }
+                                           }).FirstOrDefault();
+                        }
                     }
 
                     using (SqlDataAdapter da = new SqlDataAdapter())
@@ -109,17 +106,17 @@ namespace CatalystAPI.Controller
                         {
                             List<Answers> lstAnswers = new List<Answers>();
                             lstAnswers = (from DataRow row in dt.Rows
-                                            select new Answers
-                                            {
-                                                ID = int.Parse(row[Constants.AnswerColumns.ID].ToString()),
-                                                Answer = row[Constants.AnswerColumns.Answer].ToString(),
-                                                Author = row[Constants.AnswerColumns.Author].ToString(),
-                                                Created = DateTime.Parse(row[Constants.AnswerColumns.Created].ToString()),
-                                                Accepted = int.Parse(row[Constants.AnswerColumns.Accepted].ToString()),
-                                                Likes = int.Parse(row[Constants.AnswerColumns.Likes].ToString()),
-                                                QuestionID = int.Parse(row[Constants.AnswerColumns.QuestionID].ToString()),
-                                                Mentions = row[Constants.AnswerColumns.Mentions].ToString()
-                                            }).ToList();
+                                          select new Answers
+                                          {
+                                              ID = int.Parse(row[Constants.AnswerColumns.ID].ToString()),
+                                              Answer = row[Constants.AnswerColumns.Answer].ToString(),
+                                              Author = row[Constants.AnswerColumns.Author].ToString(),
+                                              Created = DateTime.Parse(row[Constants.AnswerColumns.Created].ToString()),
+                                              Accepted = int.Parse(row[Constants.AnswerColumns.Accepted].ToString()),
+                                              Likes = int.Parse(row[Constants.AnswerColumns.Likes].ToString()),
+                                              QuestionID = int.Parse(row[Constants.AnswerColumns.QuestionID].ToString()),
+                                              Mentions = row[Constants.AnswerColumns.Mentions].ToString()
+                                          }).ToList();
 
                             objQuestion.Answers = lstAnswers;
                         }
