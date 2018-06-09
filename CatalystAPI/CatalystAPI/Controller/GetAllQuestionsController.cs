@@ -37,7 +37,8 @@ namespace CatalystAPI.Controller
                                             Description = row[Constants.QuestionColumns.Description].ToString(),
                                             Likes = int.Parse(row[Constants.QuestionColumns.Likes].ToString()),
                                             Mentions = row[Constants.QuestionColumns.Mentions].ToString(),
-                                            Tags = row[Constants.QuestionColumns.Tags].ToString()
+                                            Tags = row[Constants.QuestionColumns.Tags].ToString(),
+                                            AnswersCount = int.Parse(row[Constants.QuestionColumns.AnswersCount].ToString())
 
                                         }).ToList();
                     }
