@@ -55,6 +55,7 @@ namespace CatalystAPI.Model
         public int UserCount { get; set; }
         public DateTime Created { get; set; }
         public bool IsActive { get; set; }
+        public bool IsPopular { get; set; }
     }
     public class Like
     {

@@ -31,14 +31,55 @@ namespace CatalystAPI.Controller
                         if (dt.Rows.Count > 0)
                         {
                             lstTags = (from DataRow row in dt.Rows
-                                            select new Tags
-                                            {
-                                                ID = int.Parse(row[Constants.TagsColumns.ID].ToString()),
-                                                Name = row[Constants.TagsColumns.Name].ToString(),
-                                                Description = row[Constants.TagsColumns.Description].ToString(),
-                                                UserCount = int.Parse(row[Constants.TagsColumns.UserCount].ToString())
+                                       select new Tags
+                                       {
+                                           ID = int.Parse(row[Constants.TagsColumns.ID].ToString()),
+                                           Name = row[Constants.TagsColumns.Name].ToString(),
+                                           Description = row[Constants.TagsColumns.Description].ToString(),
+                                           UserCount = int.Parse(row[Constants.TagsColumns.UserCount].ToString())
 
-                                            }).ToList();
+                                       }).ToList();
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+            string jsonTags = JsonConvert.SerializeObject(lstTags);
+            return jsonTags;
+        }
+
+        [HttpGet]
+        [Route("api/Tags/GetPopularTags")]
+        public string GetPopularTags()
+        {
+            List<Tags> lstTags = new List<Tags>();
+            using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+    ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+                try
+                {
+                    using (SqlDataAdapter da = new SqlDataAdapter())
+                    {
+                        da.SelectCommand = new SqlCommand(Constants.SP_GetPopularTags, connection);
+                        da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                        DataSet ds = new DataSet();
+                        da.Fill(ds, Constants.SP_GetPopularTags);
+
+                        DataTable dt = ds.Tables[Constants.SP_GetPopularTags];
+                        if (dt.Rows.Count > 0)
+                        {
+                            lstTags = (from DataRow row in dt.Rows
+                                       select new Tags
+                                       {
+                                           ID = int.Parse(row[Constants.TagsColumns.ID].ToString()),
+                                           Name = row[Constants.TagsColumns.Name].ToString(),
+                                           Description = row[Constants.TagsColumns.Description].ToString(),
+                                           UserCount = int.Parse(row[Constants.TagsColumns.UserCount].ToString()),
+                                           IsPopular = row[Constants.TagsColumns.IsPopular].ToString().Equals("1") ? true : false
+                                       }).ToList();
                         }
                     }
                 }
@@ -73,6 +114,7 @@ namespace CatalystAPI.Controller
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
                     da.SelectCommand.Parameters.Add("@Name", SqlDbType.NVarChar, 50).Value = objTag.Name;
                     da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 250).Value = objTag.Description;
+                    da.SelectCommand.Parameters.Add("@IsPopular", SqlDbType.Bit).Value = objTag.IsPopular;
 
                     connection.Open();
                     int i = da.SelectCommand.ExecuteNonQuery();

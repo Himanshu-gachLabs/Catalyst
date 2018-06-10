@@ -12,7 +12,9 @@ namespace CatalystAPI.Model
         public static string SP_GetAnswerByQuestionID = "[dbo].[stp_GetAnswerByQuestionID]";
         public static string CatalystDBConnectionString = "CatalystDBConnectionString";
         public static string tbl_AllQuestions = "AllQuestions";
+        public static string SP_GetAllQuestionsByTag = "[dbo].[stp_GetAllQuestionsByTag]";
         public static string SP_AllTags = "[dbo].[stp_GetAllTags]";
+        public static string SP_GetPopularTags = "[dbo].[stp_GetPopularTags]";
         public static string tbl_AllAnswers = "AllAnswers";
         public static string SP_SetQuestion = "[dbo].[stp_SetQuestion]";
         public static string stp_SetSubscribedTags = "[dbo].[stp_SetSubscribedTags]";
@@ -56,6 +58,7 @@ namespace CatalystAPI.Model
             public static string Name = "Name";
             public static string Description = "Description";
             public static string UserCount = "UserCount";
+            public static string IsPopular = "IsPopular";
 
         }
     }
