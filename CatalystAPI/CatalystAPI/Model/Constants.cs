@@ -15,6 +15,7 @@ namespace CatalystAPI.Model
         public static string SP_AllTags = "[dbo].[stp_GetAllTags]";
         public static string tbl_AllAnswers = "AllAnswers";
         public static string SP_SetQuestion = "[dbo].[stp_SetQuestion]";
+        public static string stp_SetSubscribedTags = "[dbo].[stp_SetSubscribedTags]";
         public static string SP_SetError = "[dbo].[stp_SetEror]";
         public static string SP_UpdateQuestion = "[dbo].[stp_UpdateQuestion]";
         public static string SP_SetAnswer = "[dbo].[stp_SetAnswer]";

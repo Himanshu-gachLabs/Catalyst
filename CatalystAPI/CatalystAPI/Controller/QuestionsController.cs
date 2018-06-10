@@ -142,7 +142,7 @@ namespace CatalystAPI.Controller
             {
                 using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
         ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
-
+                { 
                 using (SqlDataAdapter da = new SqlDataAdapter())
                 {
                     da.SelectCommand = new SqlCommand(Constants.SP_SetQuestion, connection);
@@ -152,7 +152,8 @@ namespace CatalystAPI.Controller
                     da.SelectCommand.Parameters.Add("@Tags", SqlDbType.NVarChar, 250).Value = objQuestion.Tags;
                     da.SelectCommand.Parameters.Add("@Author", SqlDbType.NVarChar, 250).Value = objQuestion.Author;
                     da.SelectCommand.Parameters.Add("@Mentions", SqlDbType.NVarChar, 250).Value = objQuestion.Mentions;
-                    connection.Open();
+                        da.SelectCommand.Parameters.Add("@UserID", SqlDbType.NVarChar, 250).Value = objQuestion.UserID;
+                        connection.Open();
                     int i = da.SelectCommand.ExecuteNonQuery();
                     connection.Close();
                     if (i >= 1)
@@ -164,6 +165,7 @@ namespace CatalystAPI.Controller
                     {
                         result = "Question Addition Failed";
                     }
+                }
                 }
             }
             catch (Exception ex)

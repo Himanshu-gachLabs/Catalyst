@@ -16,6 +16,7 @@ namespace CatalystAPI.Model
         public string Tags { get; set; }
         public string Author { get; set; }
         public string Mentions { get; set; }
+        public string UserID { get; set; }
         public DateTime Created { get; set; }
         public bool IsActive { get; set; }
 
