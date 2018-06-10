@@ -149,7 +149,6 @@ namespace CatalystAPI.Controller
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
                     da.SelectCommand.Parameters.Add("@Title", SqlDbType.NVarChar, 250).Value = objQuestion.Title;
                     da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = objQuestion.Description;
-                    da.SelectCommand.Parameters.Add("@Likes", SqlDbType.Int).Value = objQuestion.Likes;
                     da.SelectCommand.Parameters.Add("@Tags", SqlDbType.NVarChar, 250).Value = objQuestion.Tags;
                     da.SelectCommand.Parameters.Add("@Author", SqlDbType.NVarChar, 250).Value = objQuestion.Author;
                     da.SelectCommand.Parameters.Add("@Mentions", SqlDbType.NVarChar, 250).Value = objQuestion.Mentions;
@@ -171,7 +170,7 @@ namespace CatalystAPI.Controller
             {
                 Error objError = new Error();
                 objError.Method = "SP_SetError";
-                objError.Params = objQuestion.Title + "," + objQuestion.Description + "," + objQuestion.Likes + "," + objQuestion.Tags + "," + objQuestion.Author + "," + objQuestion.Mentions;
+                objError.Params = objQuestion.Title + "," + objQuestion.Description + "," + objQuestion.Tags + "," + objQuestion.Author + "," + objQuestion.Mentions;
                 objError.StackTrace = ex.StackTrace;
                 objError.Message = ex.Message;
                 objError.Source = ex.Source;
@@ -219,7 +218,8 @@ namespace CatalystAPI.Controller
                 {
                     da.SelectCommand = new SqlCommand(Constants.SP_UpdateQuestion, connection);
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    if(objQuestion.Title != null)
+                    da.SelectCommand.Parameters.Add("@QuestID", SqlDbType.Int).Value = id;
+                    if (objQuestion.Title != null)
                         da.SelectCommand.Parameters.Add("@Title", SqlDbType.NVarChar, 250).Value = objQuestion.Title;
                     if(objQuestion.Description!= null)
                         da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = objQuestion.Description;
@@ -231,10 +231,14 @@ namespace CatalystAPI.Controller
                         da.SelectCommand.Parameters.Add("@Author", SqlDbType.NVarChar, 250).Value = objQuestion.Author;
                     if (objQuestion.Mentions != null)
                         da.SelectCommand.Parameters.Add("@Mentions", SqlDbType.NVarChar, 250).Value = objQuestion.Mentions;
+                    if (objQuestion.IsActive != null)
+                        da.SelectCommand.Parameters.Add("@IsActive", SqlDbType.Bit).Value = objQuestion.IsActive;
+                    SqlParameter retValue = da.SelectCommand.Parameters.Add("return", SqlDbType.Int);
+                    retValue.Direction = ParameterDirection.ReturnValue;
                     connection.Open();
                     int i = da.SelectCommand.ExecuteNonQuery();
                     connection.Close();
-                    if (i >= 1)
+                    if (int.Parse(retValue.Value.ToString()) >= 1)
                     {
                         result = "Question Updated Succesfully";
                     }
@@ -248,7 +252,7 @@ namespace CatalystAPI.Controller
             {
                 Error objError = new Error();
                 objError.Method = "SP_SetError";
-                objError.Params = objQuestion.Title + "," + objQuestion.Description + "," + objQuestion.Likes + "," + objQuestion.Tags + "," + objQuestion.Author + "," + objQuestion.Mentions;
+                objError.Params = objQuestion.Title + "," + objQuestion.Description + "," + objQuestion.Likes + "," + objQuestion.Tags + "," + objQuestion.Author + "," + objQuestion.Mentions + "," + objQuestion.IsActive;
                 objError.StackTrace = ex.StackTrace;
                 objError.Message = ex.Message;
                 objError.Source = ex.Source;
@@ -282,8 +286,146 @@ namespace CatalystAPI.Controller
         }
 
         // DELETE: api/Questions/5
-        public void Delete(int id)
+        public string Delete(int id)
         {
+            string result;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_DeleteQuestion, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@ID", SqlDbType.Int).Value = id;
+
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Deleted Succesfully";
+
+                    }
+                    else
+                    {
+                        result = "Question Deletion Failed";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Error objError = new Error();
+                objError.Method = "SP_DeleteQuestion";
+                objError.Params = id.ToString();
+                objError.StackTrace = ex.StackTrace;
+                objError.Message = ex.Message;
+                objError.Source = ex.Source;
+
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_SetError, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@Method", SqlDbType.NVarChar, 50).Value = objError.Method;
+                    da.SelectCommand.Parameters.Add("@Params", SqlDbType.NVarChar, 1000).Value = objError.Params;
+                    da.SelectCommand.Parameters.Add("@StackTrace", SqlDbType.NVarChar, 500).Value = objError.StackTrace;
+                    da.SelectCommand.Parameters.Add("@Message", SqlDbType.NVarChar, 250).Value = objError.Message;
+                    da.SelectCommand.Parameters.Add("@Source", SqlDbType.NVarChar, 250).Value = objError.Source;
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Deletion Error Logged Succesfully";
+                    }
+                    else
+                    {
+                        result = "Question Deletion Error Log Failed";
+                    }
+                }
+            }
+            return result;
+        }
+
+        [HttpPost]
+        [Route("api/Questions/like")]
+        public string QuestionLike([FromBody]Like objLike)
+        { 
+            string result;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_LikeQuestion, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@QuestID", SqlDbType.Int).Value = objLike.ID;
+                    da.SelectCommand.Parameters.Add("@LikerID", SqlDbType.NVarChar,50).Value = objLike.UserID;
+                    da.SelectCommand.Parameters.Add("@LikerName", SqlDbType.NVarChar, 100).Value = objLike.UserName;
+
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Liked Succesfully";
+
+                    }
+                    else
+                    {
+                        result = "Question Liking Failed";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Error objError = new Error();
+                objError.Method = "SP_LikeQuestion";
+                objError.Params = objLike.ID.ToString();
+                objError.StackTrace = ex.StackTrace;
+                objError.Message = ex.Message;
+                objError.Source = ex.Source;
+
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_SetError, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@Method", SqlDbType.NVarChar, 50).Value = objError.Method;
+                    da.SelectCommand.Parameters.Add("@Params", SqlDbType.NVarChar, 1000).Value = objError.Params;
+                    da.SelectCommand.Parameters.Add("@StackTrace", SqlDbType.NVarChar, 500).Value = objError.StackTrace;
+                    da.SelectCommand.Parameters.Add("@Message", SqlDbType.NVarChar, 250).Value = objError.Message;
+                    da.SelectCommand.Parameters.Add("@Source", SqlDbType.NVarChar, 250).Value = objError.Source;
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Liking Error Logged Succesfully";
+                    }
+                    else
+                    {
+                        result = "Question Liking Error Log Failed";
+                    }
+                }
+            }
+            result = "Liked " + objLike.ID + " sdc";
+            return result;
+        }
+
+        [HttpPost]
+        [Route("api/Questions/dislike")]
+        public string QuestionDisLike([FromBody]Dislike objDislike)
+        {
+            return "DisLiked " + objDislike.ID + " sdc";
         }
     }
 }

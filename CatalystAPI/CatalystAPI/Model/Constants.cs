@@ -12,6 +12,7 @@ namespace CatalystAPI.Model
         public static string SP_GetAnswerByQuestionID = "[dbo].[stp_GetAnswerByQuestionID]";
         public static string CatalystDBConnectionString = "CatalystDBConnectionString";
         public static string tbl_AllQuestions = "AllQuestions";
+        public static string SP_AllTags = "[dbo].[stp_GetAllTags]";
         public static string tbl_AllAnswers = "AllAnswers";
         public static string SP_SetQuestion = "[dbo].[stp_SetQuestion]";
         public static string SP_SetError = "[dbo].[stp_SetEror]";
@@ -19,6 +20,11 @@ namespace CatalystAPI.Model
         public static string SP_SetAnswer = "[dbo].[stp_SetAnswer]";
         public static string SP_SetComment = "[dbo].[stp_SetComment]";
         public static string SP_SetTag = "[dbo].[stp_SetTag]";
+        public static string SP_DeleteQuestion = "[dbo].[stp_DeleteQuestion]";
+        public static string SP_LikeQuestion = "[dbo].[stp_LikeQuestion]";
+        public static string SP_LikeAnswer = "[dbo].[stp_LikeAnswer]";
+
+
 
         public static class QuestionColumns
         {
@@ -42,6 +48,14 @@ namespace CatalystAPI.Model
             public static string Likes = "Likes";
             public static string Accepted = "Accepted";
             public static string Mentions = "Mentions";
+        }
+        public static class TagsColumns
+        {
+            public static string ID = "ID";
+            public static string Name = "Name";
+            public static string Description = "Description";
+            public static string UserCount = "UserCount";
+
         }
     }
 }
