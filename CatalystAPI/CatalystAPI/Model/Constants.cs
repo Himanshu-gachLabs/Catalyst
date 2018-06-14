@@ -25,7 +25,9 @@ namespace CatalystAPI.Model
         public static string SP_SetTag = "[dbo].[stp_SetTag]";
         public static string SP_DeleteQuestion = "[dbo].[stp_DeleteQuestion]";
         public static string SP_LikeQuestion = "[dbo].[stp_LikeQuestion]";
+        public static string SP_UnlikeQuestion = "[dbo].[stp_UnlikeQuestion]";
         public static string SP_LikeAnswer = "[dbo].[stp_LikeAnswer]";
+        public static string SP_UnlikeAnswer = "[dbo].[stp_UnlikeAnswer]";
 
 
 

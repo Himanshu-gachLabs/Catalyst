@@ -108,6 +108,7 @@
     <Compile Include="Model\CatalystDataContract.cs" />
     <Compile Include="Model\Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\TriggerPushNotification.cs" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

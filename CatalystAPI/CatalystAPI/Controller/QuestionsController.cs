@@ -1,4 +1,5 @@
 ﻿using CatalystAPI.Model;
+using CatalystAPI.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace CatalystAPI.Controller
                     {
                         da.SelectCommand = new SqlCommand(Constants.SP_GetAllQuestionsByTag, connection);
                         da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                        if(Tag != "All")
+                        if (Tag != "All")
                             da.SelectCommand.Parameters.Add("@Tag", SqlDbType.NVarChar, 50).Value = Tag;
 
                         DataSet ds = new DataSet();
@@ -80,19 +81,19 @@ namespace CatalystAPI.Controller
                         if (dt.Rows.Count > 0)
                         {
                             lstQuestions = (from DataRow row in dt.Rows
-                            select new Question
-                            {
-                                ID = int.Parse(row[Constants.QuestionColumns.ID].ToString()),
-                                Title = row[Constants.QuestionColumns.Title].ToString(),
-                                Author = row[Constants.QuestionColumns.Author].ToString(),
-                                Created = DateTime.Parse(row[Constants.QuestionColumns.Created].ToString()),
-                                Description = row[Constants.QuestionColumns.Description].ToString(),
-                                Likes = int.Parse(row[Constants.QuestionColumns.Likes].ToString()),
-                                Mentions = row[Constants.QuestionColumns.Mentions].ToString(),
-                                Tags = row[Constants.QuestionColumns.Tags].ToString(),
-                                AnswersCount = int.Parse(row[Constants.QuestionColumns.AnswersCount].ToString())
+                                            select new Question
+                                            {
+                                                ID = int.Parse(row[Constants.QuestionColumns.ID].ToString()),
+                                                Title = row[Constants.QuestionColumns.Title].ToString(),
+                                                Author = row[Constants.QuestionColumns.Author].ToString(),
+                                                Created = DateTime.Parse(row[Constants.QuestionColumns.Created].ToString()),
+                                                Description = row[Constants.QuestionColumns.Description].ToString(),
+                                                Likes = int.Parse(row[Constants.QuestionColumns.Likes].ToString()),
+                                                Mentions = row[Constants.QuestionColumns.Mentions].ToString(),
+                                                Tags = row[Constants.QuestionColumns.Tags].ToString(),
+                                                AnswersCount = int.Parse(row[Constants.QuestionColumns.AnswersCount].ToString())
 
-                            }).ToList();
+                                            }).ToList();
                         }
                     }
                 }
@@ -184,37 +185,39 @@ namespace CatalystAPI.Controller
         // POST: api/Questions
         public string Post([FromBody]Question objQuestion)
         {
-             string result;
+            string result;
             //Question objQuestion = new Question();
             //objQuestion = (JsonConvert.DeserializeObject(value)) as Question;
             try
             {
                 using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
         ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
-                { 
-                using (SqlDataAdapter da = new SqlDataAdapter())
                 {
-                    da.SelectCommand = new SqlCommand(Constants.SP_SetQuestion, connection);
-                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@Title", SqlDbType.NVarChar, 250).Value = objQuestion.Title;
-                    da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = objQuestion.Description;
-                    da.SelectCommand.Parameters.Add("@Tags", SqlDbType.NVarChar, 250).Value = objQuestion.Tags;
-                    da.SelectCommand.Parameters.Add("@Author", SqlDbType.NVarChar, 250).Value = objQuestion.Author;
-                    da.SelectCommand.Parameters.Add("@Mentions", SqlDbType.NVarChar, 250).Value = objQuestion.Mentions;
+                    using (SqlDataAdapter da = new SqlDataAdapter())
+                    {
+                        da.SelectCommand = new SqlCommand(Constants.SP_SetQuestion, connection);
+                        da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                        da.SelectCommand.Parameters.Add("@Title", SqlDbType.NVarChar, 250).Value = objQuestion.Title;
+                        da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = objQuestion.Description;
+                        da.SelectCommand.Parameters.Add("@Tags", SqlDbType.NVarChar, 250).Value = objQuestion.Tags;
+                        da.SelectCommand.Parameters.Add("@Author", SqlDbType.NVarChar, 250).Value = objQuestion.Author;
+                        da.SelectCommand.Parameters.Add("@Mentions", SqlDbType.NVarChar, 250).Value = objQuestion.Mentions;
                         da.SelectCommand.Parameters.Add("@UserID", SqlDbType.NVarChar, 250).Value = objQuestion.UserID;
                         connection.Open();
-                    int i = da.SelectCommand.ExecuteNonQuery();
-                    connection.Close();
-                    if (i >= 1)
-                    {
-                        result = "Question Added Succesfully";
+                        int i = da.SelectCommand.ExecuteNonQuery();
+                        connection.Close();
 
+                        TriggerPushNotification.SendNotificationFromFirebaseCloud(objQuestion);
+                        if (i >= 1)
+                        {
+                            result = "Question Added Succesfully";
+
+                        }
+                        else
+                        {
+                            result = "Question Addition Failed";
+                        }
                     }
-                    else
-                    {
-                        result = "Question Addition Failed";
-                    }
-                }
                 }
             }
             catch (Exception ex)
@@ -272,9 +275,9 @@ namespace CatalystAPI.Controller
                     da.SelectCommand.Parameters.Add("@QuestID", SqlDbType.Int).Value = id;
                     if (objQuestion.Title != null)
                         da.SelectCommand.Parameters.Add("@Title", SqlDbType.NVarChar, 250).Value = objQuestion.Title;
-                    if(objQuestion.Description!= null)
+                    if (objQuestion.Description != null)
                         da.SelectCommand.Parameters.Add("@Description", SqlDbType.NVarChar, 4000).Value = objQuestion.Description;
-                    if(objQuestion.Likes >= 0)
+                    if (objQuestion.Likes >= 0)
                         da.SelectCommand.Parameters.Add("@Likes", SqlDbType.Int).Value = objQuestion.Likes;
                     if (objQuestion.Tags != null)
                         da.SelectCommand.Parameters.Add("@Tags", SqlDbType.NVarChar, 250).Value = objQuestion.Tags;
@@ -403,9 +406,9 @@ namespace CatalystAPI.Controller
         }
 
         [HttpPost]
-        [Route("api/Questions/like")]
+        [Route("api/Questions/Like")]
         public string QuestionLike([FromBody]Like objLike)
-        { 
+        {
             string result;
             try
             {
@@ -416,9 +419,9 @@ namespace CatalystAPI.Controller
                 {
                     da.SelectCommand = new SqlCommand(Constants.SP_LikeQuestion, connection);
                     da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                    da.SelectCommand.Parameters.Add("@QuestID", SqlDbType.Int).Value = objLike.ID;
-                    da.SelectCommand.Parameters.Add("@LikerID", SqlDbType.NVarChar,50).Value = objLike.UserID;
-                    da.SelectCommand.Parameters.Add("@LikerName", SqlDbType.NVarChar, 100).Value = objLike.UserName;
+                    da.SelectCommand.Parameters.Add("@QuestionID", SqlDbType.Int).Value = objLike.ID;
+                    da.SelectCommand.Parameters.Add("@LikerID", SqlDbType.NVarChar, 50).Value = objLike.UserID;
+                    da.SelectCommand.Parameters.Add("@LikerName", SqlDbType.NVarChar, 50).Value = objLike.UserName;
 
                     connection.Open();
                     int i = da.SelectCommand.ExecuteNonQuery();
@@ -473,10 +476,72 @@ namespace CatalystAPI.Controller
         }
 
         [HttpPost]
-        [Route("api/Questions/dislike")]
-        public string QuestionDisLike([FromBody]Dislike objDislike)
+        [Route("api/Questions/Unlike")]
+        public string QuestionUnLike([FromBody]Like objUnlike)
         {
-            return "DisLiked " + objDislike.ID + " sdc";
+            string result;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_UnlikeQuestion, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@QuestionID", SqlDbType.Int).Value = objUnlike.ID;
+                    da.SelectCommand.Parameters.Add("@LikerID", SqlDbType.NVarChar, 50).Value = objUnlike.UserID;
+                    da.SelectCommand.Parameters.Add("@LikerName", SqlDbType.NVarChar, 50).Value = objUnlike.UserName;
+
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Unliked Succesfully";
+
+                    }
+                    else
+                    {
+                        result = "Question Unliking Failed";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Error objError = new Error();
+                objError.Method = "SP_LikeQuestion";
+                objError.Params = objUnlike.ID.ToString();
+                objError.StackTrace = ex.StackTrace;
+                objError.Message = ex.Message;
+                objError.Source = ex.Source;
+
+                using (SqlConnection connection = new SqlConnection(System.Configuration.ConfigurationManager.
+        ConnectionStrings[Constants.CatalystDBConnectionString].ConnectionString))
+
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+                    da.SelectCommand = new SqlCommand(Constants.SP_SetError, connection);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.Add("@Method", SqlDbType.NVarChar, 50).Value = objError.Method;
+                    da.SelectCommand.Parameters.Add("@Params", SqlDbType.NVarChar, 1000).Value = objError.Params;
+                    da.SelectCommand.Parameters.Add("@StackTrace", SqlDbType.NVarChar, 500).Value = objError.StackTrace;
+                    da.SelectCommand.Parameters.Add("@Message", SqlDbType.NVarChar, 250).Value = objError.Message;
+                    da.SelectCommand.Parameters.Add("@Source", SqlDbType.NVarChar, 250).Value = objError.Source;
+                    connection.Open();
+                    int i = da.SelectCommand.ExecuteNonQuery();
+                    connection.Close();
+                    if (i >= 1)
+                    {
+                        result = "Question Unliking Error Logged Succesfully";
+                    }
+                    else
+                    {
+                        result = "Question Unliking Error Log Failed";
+                    }
+                }
+            }
+            return "UnLiked " + objUnlike.ID + " sdc";
         }
     }
 }

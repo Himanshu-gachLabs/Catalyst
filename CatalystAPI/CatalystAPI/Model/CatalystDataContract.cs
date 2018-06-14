@@ -28,7 +28,7 @@ namespace CatalystAPI.Model
         public int QuestionID { get; set; }
         public string Answer { get; set; }
         public int Likes { get; set; }
-        public int Dislikes { get; set; }
+        public int Unlikes { get; set; }
         public int Accepted { get; set; }
         public string Author { get; set; }
         public string Mentions { get; set; }
@@ -62,13 +62,9 @@ namespace CatalystAPI.Model
         public int ID { get; set; }
         public string UserID { get; set; }
         public string UserName { get; set; }
+        public bool IsLiked { get; set; }
     }
-    public class Dislike
-    {
-        public int ID { get; set; }
-        public string UserID { get; set; }
-        public string UserName { get; set; }
-    }
+
     public class Error
     {
         public int ID { get; set; }

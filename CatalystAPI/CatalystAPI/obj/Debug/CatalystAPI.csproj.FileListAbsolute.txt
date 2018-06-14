@@ -257,7 +257,6 @@ D:\Catalyst\CatalystAPI\CatalystAPI\bin\Newtonsoft.Json.xml
 D:\Catalyst\CatalystAPI\CatalystAPI\bin\System.Net.Http.Formatting.xml
 D:\Catalyst\CatalystAPI\CatalystAPI\bin\System.Web.Http.xml
 D:\Catalyst\CatalystAPI\CatalystAPI\bin\System.Web.Http.WebHost.xml
-D:\Catalyst\CatalystAPI\CatalystAPI\obj\Debug\CatalystAPI.csprojAssemblyReference.cache
 D:\Catalyst\CatalystAPI\CatalystAPI\obj\Debug\CatalystAPI.csproj.CoreCompileInputs.cache
 D:\Catalyst\CatalystAPI\CatalystAPI\obj\Debug\CatalystAPI.csproj.CopyComplete
 D:\Catalyst\CatalystAPI\CatalystAPI\obj\Debug\CatalystAPI.dll
